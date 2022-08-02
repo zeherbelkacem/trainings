@@ -2,11 +2,18 @@ package com.fms.trainings;
 
 import com.fms.trainings.entities.Category;
 import com.fms.trainings.entities.Training;
+import com.fms.trainings.security.entities.Rrole;
+import com.fms.trainings.security.entities.Uuser;
+import com.fms.trainings.security.service.AuthService;
 import com.fms.trainings.service.CategoryService;
 import com.fms.trainings.service.TrainingService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -15,10 +22,16 @@ import java.util.List;
 @SpringBootApplication
 public class TrainingsApplication implements CommandLineRunner {
 
-    private final TrainingService trainingService;
-    private final CategoryService categoryService;
+  //  private PasswordEncoder passwordEncoder;
+    private TrainingService trainingService;
+    private CategoryService categoryService;
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    public TrainingsApplication(TrainingService trainingService, CategoryService categoryService) {
+
+    public TrainingsApplication( TrainingService trainingService, CategoryService categoryService) {
         this.trainingService = trainingService;
         this.categoryService = categoryService;
     }
@@ -27,18 +40,32 @@ public class TrainingsApplication implements CommandLineRunner {
         SpringApplication.run(TrainingsApplication.class, args);
     }
 
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
     @Override
     public void run(String... args) {
-        Category data = new Category(null, "Big Data, Data Science & AI", null);
+        /*Roles & Users*/
+       /* authService.saveRrole(new Rrole(0, "ADMIN"));
+        authService.saveRrole(new Rrole(0, "USER"));
+        authService.saveUuser(new Uuser(0, "admin", passwordEncoder.encode("1234"), true));
+        authService.saveUuser(new Uuser(0, "ilyas", passwordEncoder.encode("1234"), true));
+        authService.saveUuser(new Uuser(0, "aksel", passwordEncoder.encode("1234"), true));*/
+        /*Categories*/
+
+       /* Category data = new Category(null, "Big Data, Data Science & AI", null);
         Category development = new Category(null, "Development", null);
         Category webDevelopment = new Category(null, "Web Development", null);
         Category cloud = new Category(null, "Cloud", null);
         Category network = new Category(null, "Network & Telecommunication", null);
         Category virtualization = new Category(null, "Virtualization", null);
         Category cyberSecurity = new Category(null, "Cyber Security", null);
-        Category erp = new Category(null, "ERP", null);
+        Category erp = new Category(null, "ERP", null);*/
 
-        categoryService.saveCategory(data);
+        /*categoryService.saveCategory(data);
         categoryService.saveCategory(cloud);
         categoryService.saveCategory(development);
         categoryService.saveCategory(webDevelopment);
@@ -95,12 +122,12 @@ public class TrainingsApplication implements CommandLineRunner {
                 null, true, false, LocalDate.of(2023, 2, 1),
                 LocalDate.of(2023, 8, 30), Period.between(LocalDate.of(2023, 2, 1),
                 LocalDate.of(2023, 8, 30)).toString(), webDevelopment));
-
-
-		List<Training> trainings = trainingService.getAllTrainings();
-		trainings.forEach(t->{
-			System.out.println(t.getCategory().getName());
-		});
+*/
+/*
+        List<Training> trainings = trainingService.getAllTrainings();
+        trainings.forEach(t -> {
+            System.out.println(t.getCategory().getName());
+        });*/
 
     }
 }

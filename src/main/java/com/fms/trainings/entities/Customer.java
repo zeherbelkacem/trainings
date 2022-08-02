@@ -1,15 +1,11 @@
 package com.fms.trainings.entities;
 
-import com.fms.trainings.security.Uuser;
+import com.fms.trainings.security.entities.Uuser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -44,7 +40,7 @@ public class Customer {
     private String phone;
 
     @Column
-    private String address;
+    private Address address;
 
     @ManyToOne
     private Uuser uuser;

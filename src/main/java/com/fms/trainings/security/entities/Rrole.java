@@ -1,4 +1,4 @@
-package com.fms.trainings.security;
+package com.fms.trainings.security.entities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,6 @@ public class Rrole {
     private long roleId;
 
     @Column(name = "ROLE")
-//	@Enumerated(EnumType.STRING)
     private String role;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)

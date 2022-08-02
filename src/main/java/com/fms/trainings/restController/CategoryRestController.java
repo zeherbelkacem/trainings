@@ -1,8 +1,10 @@
 package com.fms.trainings.restController;
 
 import com.fms.trainings.entities.Category;
+import com.fms.trainings.entities.Order;
 import com.fms.trainings.entities.Training;
 import com.fms.trainings.service.CategoryService;
+import com.fms.trainings.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,9 +28,19 @@ public class CategoryRestController {
         return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
     }
 
-   /* @GetMapping(value = "/byCategory/{catName}")
-    public @ResponseBody ResponseEntity<List<Training>> getTrainingsByCategoryName(@PathVariable String catName){
+    @GetMapping("/category/{id}")
+    public @ResponseBody ResponseEntity<Category> getCategoryById(@PathVariable long id){
+        return new ResponseEntity<>(categoryService.getCategoryById(id), HttpStatus.OK);
+    }
 
-        return new ResponseEntity<List<Training>>(trainingService.findByCategoryNameContains(catName), HttpStatus.OK);
-    }*/
+
+    @PostMapping("/save")
+    public @ResponseBody ResponseEntity<Category> saveCategory(@RequestBody Category category){
+        return new ResponseEntity<Category>(categoryService.saveCategory(category), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public @ResponseBody void deleteCategory(@PathVariable long id){
+        categoryService.deleteCategory(id);
+    }
 }
