@@ -40,10 +40,10 @@ public class TrainingsApplication implements CommandLineRunner {
         SpringApplication.run(TrainingsApplication.class, args);
     }
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
 
     @Override
@@ -55,7 +55,6 @@ public class TrainingsApplication implements CommandLineRunner {
         authService.saveUuser(new Uuser(0, "ilyas", passwordEncoder.encode("1234"), true));
         authService.saveUuser(new Uuser(0, "aksel", passwordEncoder.encode("1234"), true));*/
         /*Categories*/
-
        /* Category data = new Category(null, "Big Data, Data Science & AI", null);
         Category development = new Category(null, "Development", null);
         Category webDevelopment = new Category(null, "Web Development", null);

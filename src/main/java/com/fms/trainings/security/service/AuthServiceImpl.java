@@ -4,6 +4,7 @@ import com.fms.trainings.security.entities.Rrole;
 import com.fms.trainings.security.entities.Uuser;
 import com.fms.trainings.security.repository.RroleRepository;
 import com.fms.trainings.security.repository.UuserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +17,12 @@ public class AuthServiceImpl implements AuthService {
     private RroleRepository rroleRepository;
     private UuserRepository uuserRepository;
 
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public AuthServiceImpl(RroleRepository rroleRepository, UuserRepository uuserRepository, PasswordEncoder passwordEncoder) {
+    public AuthServiceImpl(RroleRepository rroleRepository, UuserRepository uuserRepository) {
         this.rroleRepository = rroleRepository;
         this.uuserRepository = uuserRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override

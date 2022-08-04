@@ -23,6 +23,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
@@ -65,12 +67,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//		PasswordEncoder passwordEncoder = passwordEncoder();
+		PasswordEncoder passwordEncoder = passwordEncoder();
         auth.userDetailsService(new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
                 Uuser uuser = authService.findUuserByUserName(username);
+                System.out.println(uuser.getUserName());
                 List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
                 uuser.getRoles().forEach(r -> {
                     GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_" + r.getRole());
@@ -80,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 return new User(uuser.getUserName(), uuser.getPassword(),
                         grantedAuthorities);
             }
-        });
+        }).passwordEncoder(passwordEncoder());
 
     }
 
@@ -91,7 +94,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 //        http.formLogin().loginPage("/login");
 
-//       http.authorizeHttpRequests().antMatchers( HttpMethod.POST,"/auth/**").hasRole("ADMIN");
+       http.authorizeHttpRequests().antMatchers( HttpMethod.POST,"/auth/**").hasRole("ADMIN");
 //        http.authorizeHttpRequests().antMatchers( HttpMethod.GET,"/auth/**").hasRole("USER");
         //http.authorizeHttpRequests().antMatchers("/myCustomers/**/**").authenticated();
         http.authorizeHttpRequests().antMatchers("/api/login").permitAll();
@@ -104,7 +107,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.headers()
                 .addHeaderWriter(
                         new StaticHeadersWriter("Access-Control-Allow-Origin", "http://localhost:4200")
-                );
+                       );
 
 
     }
@@ -113,5 +116,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
