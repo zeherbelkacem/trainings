@@ -12,6 +12,7 @@ import java.util.List;
 @Service
 public class AuthServiceImpl implements AuthService {
 
+    String token = "";
     private RroleRepository rroleRepository;
     private UuserRepository uuserRepository;
 
@@ -67,6 +68,15 @@ public class AuthServiceImpl implements AuthService {
         Uuser uuser = uuserRepository.findByUserName(user);
         uuser.getRoles().add(rroleRepository.findByRole(role));
         return uuserRepository.save(uuser);
+    }
+
+    @Override
+    public void setToken(String token) {
+        this.token = token;
+    }
+    @Override
+    public String getToken() {
+        return this.token;
     }
 
 }

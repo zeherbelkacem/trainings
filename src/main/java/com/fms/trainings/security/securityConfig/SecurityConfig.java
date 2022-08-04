@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
 /**
  * @author groupe Caroline, Delmerie et Belkacem
@@ -64,18 +65,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-
 //		PasswordEncoder passwordEncoder = passwordEncoder();
-
         auth.userDetailsService(new UserDetailsService() {
-
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
                 Uuser uuser = authService.findUuserByUserName(username);
                 List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
                 uuser.getRoles().forEach(r -> {
-                    System.out.println(r.getRole());
                     GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_" + r.getRole());
                     grantedAuthorities.add(grantedAuthority);
                 });
@@ -89,20 +86,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-       // http.formLogin();
+        // http.formLogin();
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 //        http.formLogin().loginPage("/login");
 
-       http.authorizeHttpRequests().antMatchers( HttpMethod.POST,"/auth/**").hasRole("ADMIN");
-        http.authorizeHttpRequests().antMatchers( HttpMethod.GET,"/auth/**").hasRole("USER");
+//       http.authorizeHttpRequests().antMatchers( HttpMethod.POST,"/auth/**").hasRole("ADMIN");
+//        http.authorizeHttpRequests().antMatchers( HttpMethod.GET,"/auth/**").hasRole("USER");
         //http.authorizeHttpRequests().antMatchers("/myCustomers/**/**").authenticated();
-        http.authorizeHttpRequests().antMatchers("/auth/authenticate").permitAll();
-       //- http.exceptionHandling().accessDeniedPage("/accessDenied");
-        http.authorizeHttpRequests().anyRequest().authenticated();
+        http.authorizeHttpRequests().antMatchers("/api/login").permitAll();
+        http.authorizeHttpRequests().antMatchers( "/api/category/**").permitAll();
+        http.authorizeHttpRequests().antMatchers( "/api/training/**").permitAll();
+        // http.exceptionHandling().accessDeniedPage("/accessDenied");
+        //http.authorizeHttpRequests().anyRequest().authenticated();
         http.addFilter(new JwtAuthenticationFilter(authenticationManagerBean()));
         http.addFilterBefore(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-
+        http.headers()
+                .addHeaderWriter(
+                        new StaticHeadersWriter("Access-Control-Allow-Origin", "http://localhost:4200")
+                );
 
 
     }

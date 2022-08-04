@@ -26,8 +26,7 @@ public class authRestController {
     private AuthService authService;
     @Autowired
     private AuthenticationManager authenticationManager;
-    @Autowired
-    private SecurityConfig securityConfig;
+
 
     public authRestController(AuthService authService) {
         this.authService = authService;
@@ -52,21 +51,17 @@ public class authRestController {
     public ResponseEntity<List<Uuser>> getAllUsers() {
         return new ResponseEntity<List<Uuser>>(authService.getAllUsers(), HttpStatus.OK);
     }
-
-
-//    @PostMapping("/authenticate")
-//    public  ResponseEntity<Jwt> authenticate(@RequestBody HttpServletRequest request){
-//       return (ResponseEntity<Authentication>) authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getParameter("username"), request.getParameter("password")));
-////        final UserDetails userDetails = securityConfig.userDetailsServiceBean().loadUserByUsername();
-//
-//    }
-
-
+    @PostMapping("/authenticate")
+    public  ResponseEntity<HttpServletResponse> authenticate(@RequestBody HttpServletRequest request){
+       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getParameter("username"),
+               request.getParameter("password")));
+        System.out.println("tokeeeeeeennnnn :"+authService.getToken());
+       return new ResponseEntity<HttpServletResponse>(HttpStatus.OK);
+    }
 }
 
 @Data
 class AddRoleToUserForm {
     String user;
     String role;
-
 }

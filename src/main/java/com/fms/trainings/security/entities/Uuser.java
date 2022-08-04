@@ -54,4 +54,9 @@ public class Uuser {
         this.active = active;
     }
 
+    public Uuser(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
+    }
+
 }

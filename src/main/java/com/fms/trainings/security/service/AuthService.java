@@ -41,4 +41,7 @@ public interface AuthService {
     public List<Uuser>  getAllUsers();
 
     public Uuser addRoleToUser(String user, String role);
+
+    public void setToken(String token);
+    public String getToken();
 }
