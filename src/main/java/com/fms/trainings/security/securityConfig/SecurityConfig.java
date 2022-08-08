@@ -13,7 +13,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -60,6 +62,7 @@ import org.springframework.security.web.header.writers.StaticHeadersWriter;
  */
 @Configuration
 @EnableWebSecurity
+
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -90,26 +93,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // http.formLogin();
-        http.csrf().disable();
+        http.cors().and().csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//        http.formLogin().loginPage("/login");
 
-       http.authorizeHttpRequests().antMatchers( HttpMethod.POST,"/auth/**").hasRole("ADMIN");
-//        http.authorizeHttpRequests().antMatchers( HttpMethod.GET,"/auth/**").hasRole("USER");
-        //http.authorizeHttpRequests().antMatchers("/myCustomers/**/**").authenticated();
-        http.authorizeHttpRequests().antMatchers("/api/login").permitAll();
-        http.authorizeHttpRequests().antMatchers( "/api/category/**").permitAll();
-        http.authorizeHttpRequests().antMatchers( "/api/training/**").permitAll();
-        // http.exceptionHandling().accessDeniedPage("/accessDenied");
-        //http.authorizeHttpRequests().anyRequest().authenticated();
+        http.authorizeHttpRequests().antMatchers( HttpMethod.GET,"/api/category/**").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/training/**").permitAll();
+
+//        http.formLogin().loginPage("/login");
+//       http.authorizeHttpRequests().antMatchers( HttpMethod.POST,"/auth/**").hasRole("ADMIN");
+////        http.authorizeHttpRequests().antMatchers( HttpMethod.GET,"/auth/**").hasRole("USER");
+//        //http.authorizeHttpRequests().antMatchers("/myCustomers/**/**").authenticated();
+//        http.authorizeHttpRequests().antMatchers("/api/login").permitAll();
+//
+//        http.authorizeRequests(
+//                request -> request.antMatchers(HttpMethod.GET,"/api/category/**").permitAll()
+//                        .anyRequest().authenticated()
+//        );
+
+       // http.authorizeHttpRequests().anyRequest().authenticated();
         http.addFilter(new JwtAuthenticationFilter(authenticationManagerBean()));
-        http.addFilterBefore(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class).csrf().disable()
+                .authorizeRequests().antMatchers("/**/api/login",
+                        "/**/api/training/**",
+                        "/**/category/**").permitAll()
+                .anyRequest().authenticated();
         http.headers()
                 .addHeaderWriter(
                         new StaticHeadersWriter("Access-Control-Allow-Origin", "http://localhost:4200")
                        );
-
-
     }
 
     @Bean
@@ -120,5 +131,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/api/**");
     }
 }
